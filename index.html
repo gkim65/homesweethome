@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Home Sweet Home</title>
+<meta name="description" content="A cozy little chore tracker: what to clean, where, and when you last did it." />
+<meta name="theme-color" content="#fff4fa" />
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png" />
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+<link rel="manifest" href="manifest.webmanifest" />
+<meta name="apple-mobile-web-app-title" content="Home Sweet Home" />
+<!-- Only these sources may run code, load styles or fonts, or be contacted from this page. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self';
+  script-src 'self' https://accounts.google.com/gsi/client;
+  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com/gsi/style;
+  font-src https://fonts.gstatic.com;
+  connect-src 'self' https://www.googleapis.com https://sheets.googleapis.com https://oauth2.googleapis.com https://accounts.google.com/gsi/;
+  frame-src https://accounts.google.com/gsi/;
+  img-src 'self' data:;
+  object-src 'none'; base-uri 'self'; form-action 'self'" />
+<meta name="referrer" content="no-referrer" />
+<script src="js/boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="logo rgb-ring" id="logo"></span>
+    <div>
+      <h1>Home Sweet Home</h1>
+      <span class="tagline">little chores, cozy home</span>
+    </div>
+  </div>
+  <div class="actions">
+    <button class="btn btn-primary" id="add-chore">+ chore</button>
+    <span class="sync-wrap">
+      <button class="btn btn-ghost sync-btn" id="sync-status" data-status="local"><span class="sync-dot"></span><span class="sync-label">connect Google Sheets</span></button>
+      <div class="sync-menu" id="sync-menu" hidden>
+        <button id="sync-now">sync now</button>
+        <button id="sync-off">disconnect</button>
+        <button id="sync-erase">disconnect and erase this browser's copy</button>
+      </div>
+    </span>
+    <a class="btn btn-ghost" id="sheet-link" href="#" target="_blank" rel="noopener noreferrer" hidden>open sheet</a>
+    <button class="btn btn-ghost" id="about-open">about</button>
+    <button class="btn btn-ghost" id="theme-toggle" aria-label="Toggle light and dark theme"></button>
+  </div>
+</header>
+
+<main class="page">
+  <section class="summary" id="summary" aria-label="How your home is doing"></section>
+
+  <section class="controls" aria-label="Find and filter chores">
+    <input class="search" id="search" type="search" placeholder="find a chore…" aria-label="Search chores" />
+    <div class="group-toggle" role="group" aria-label="Group chores by">
+      <span class="muted">group by</span>
+      <button class="chip" data-group="room" aria-pressed="true">room</button>
+      <button class="chip" data-group="type" aria-pressed="false">type</button>
+      <button class="chip" data-group="due" aria-pressed="false">due</button>
+    </div>
+    <div class="filter-row"><span class="filter-label">rooms</span><div class="chips" id="room-chips"></div></div>
+    <div class="filter-row"><span class="filter-label">types</span><div class="chips" id="type-chips"></div></div>
+  </section>
+
+  <section class="board" id="board" aria-live="polite"></section>
+
+  <div class="empty" id="empty" hidden>
+    <span class="empty-icon"></span>
+    <p>No chores yet!</p>
+    <p class="muted">Add your own with <strong>+ chore</strong>, or start from a few everyday ones.</p>
+    <div class="row-center">
+      <button class="btn btn-primary" id="empty-add">+ add a chore</button>
+      <button class="btn" id="empty-starter">add starter chores</button>
+    </div>
+  </div>
+</main>
+
+<dialog class="sheet-dialog" id="editor" aria-labelledby="editor-title">
+  <form method="dialog" id="editor-form">
+    <h2 id="editor-title">New chore</h2>
+    <label>What needs doing?
+      <input name="name" maxlength="120" required placeholder="e.g. mop the kitchen floor" autocomplete="off" />
+    </label>
+    <div class="two">
+      <label>Room
+        <input name="room" maxlength="60" list="room-options" placeholder="e.g. Kitchen" autocomplete="off" />
+      </label>
+      <label>Type of task
+        <input name="type" maxlength="60" list="type-options" placeholder="e.g. Mopping" autocomplete="off" />
+      </label>
+    </div>
+    <div class="preview-icons" id="editor-icons" aria-hidden="true"></div>
+    <label>How often? <span class="muted">(days; leave empty for "whenever")</span>
+      <input name="every" type="number" min="1" max="3650" step="1" inputmode="numeric" placeholder="e.g. 7" />
+    </label>
+    <div class="chips quick-every" id="quick-every">
+      <button type="button" class="chip" data-days="1">daily</button>
+      <button type="button" class="chip" data-days="3">every 3 days</button>
+      <button type="button" class="chip" data-days="7">weekly</button>
+      <button type="button" class="chip" data-days="14">every 2 weeks</button>
+      <button type="button" class="chip" data-days="30">monthly</button>
+      <button type="button" class="chip" data-days="">whenever</button>
+    </div>
+    <label>Notes
+      <textarea name="notes" rows="2" maxlength="2000" placeholder="anything to remember"></textarea>
+    </label>
+
+    <div class="history-box">
+      <h3 id="history-title">Done on</h3>
+      <div class="done-add">
+        <input type="date" name="doneDate" aria-label="Date you did it" />
+        <button type="button" class="btn" id="done-add">✓ log it</button>
+      </div>
+      <ul class="history" id="history-list"></ul>
+    </div>
+
+    <div class="editor-actions">
+      <button type="button" class="btn btn-danger" id="editor-delete" hidden>delete</button>
+      <span class="spacer"></span>
+      <button class="btn btn-ghost" value="cancel" formnovalidate>cancel</button>
+      <button class="btn btn-primary" value="save">save</button>
+    </div>
+  </form>
+</dialog>
+<datalist id="room-options"></datalist>
+<datalist id="type-options"></datalist>
+
+<dialog class="sheet-dialog about" id="about" aria-labelledby="about-title">
+  <form method="dialog">
+    <h2 id="about-title">About Home Sweet Home</h2>
+    <p>A cozy little place to keep track of the chores around your home: what needs doing, which
+      room it is in, what kind of task it is, and when you last did it.</p>
+    <p>Each chore has a little <strong>dust meter</strong> that fills up as the days pass. When it
+      is full, the chore is due and gets a rainbow glow. Tap <strong>✓</strong> when you have done it.</p>
+    <p><strong>Your privacy.</strong> Your chores are kept in only two places: a Google Sheet in
+      your own Google Drive, and this browser. There is no server and no analytics. The app can only
+      open the one sheet it created, not anything else in your Drive, and it never shares that sheet.</p>
+    <p>Made by Grace, with help from Claude.</p>
+    <div class="editor-actions"><span class="spacer"></span><button class="btn btn-primary" value="ok">close</button></div>
+  </form>
+</dialog>
+
+<dialog class="sheet-dialog small" id="ask-dialog" aria-label="Question">
+  <form method="dialog">
+    <p class="ask-message"></p>
+    <div class="editor-actions">
+      <span class="spacer"></span>
+      <button class="btn btn-ghost" value="no">no</button>
+      <button class="btn btn-primary" value="yes">yes</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="welcome" id="welcome" hidden>
+  <div class="welcome-card">
+    <span class="welcome-logo rgb-ring"></span>
+    <h1 class="welcome-title">Home Sweet Home</h1>
+    <p class="tagline">little chores, cozy home</p>
+    <p>Keep track of what needs cleaning, room by room, and when you last did it.</p>
+    <button class="btn btn-primary welcome-signin">sign in with Google</button>
+    <button class="mini welcome-offline">continue without syncing</button>
+    <p class="fine">Your chores are kept in a Google Sheet in your own Drive, and in this browser.
+      There is no server, and nobody else can see them.</p>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"><span class="toast-text"></span><button class="mini toast-undo" hidden>undo</button></div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
