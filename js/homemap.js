@@ -1,6 +1,6 @@
 // Our place: a bird's-eye pixel floorplan of the apartment, drawn from the sketch of it.
 //
-// Laid out long-ways: along the top are the bed nook, living room, kitchen and bathroom; along the
+// Laid out long-ways: along the top are the bed corner, living room, kitchen and bathroom; along the
 // bottom are the desk, the closet (with the laundry inside it) and the hallway to the front door.
 // Each room you use is placed in its spot by keywords in its name. A spot glows soft pink with
 // dust puffs when chores there are due, twinkles when everything there is done, and filters the
@@ -84,18 +84,26 @@ function drawStudio(svg) {
   const f = group(svg, 'furniture');
   const plant = (x, y) => { thing(f, x, y, 1, 1, C.pot); circle(f, x + 0.5, y + 0.35, 0.65, C.green); };
 
-  // Bed nook: bed with its head against the left wall, nightstand, and a curtain at the opening.
-  thing(f, 0.9, 0.9, 4.6, 4.4, C.white);
-  thing(f, 1.1, 1.2, 1.1, 1.7, C.white, C.line);
-  thing(f, 1.1, 3.2, 1.1, 1.7, C.white, C.line);
-  thing(f, 2.5, 0.9, 3, 4.4, C.lav);
-  rect(f, 2.9, 0.9, 0.25, 4.4, C.lavDark);
-  thing(f, 0.9, 5.6, 1.2, 1.1, C.woodDark);
-  circle(f, 1.5, 6.15, 0.35, C.yellow);
-  for (let y = 4.6; y < 7; y += 0.5) rect(f, 6.2, y, 0.3, 0.35, C.pinkDark);
-  // Open floor under the bed nook: a round rug and a plant.
-  circle(f, 3.4, 10.2, 2, C.pink, { stroke: C.white, 'stroke-width': 0.2, 'stroke-dasharray': '0.4 0.3' });
+  // Bed corner (open to the living room): bed with its pillows at the top wall, nightstand.
+  thing(f, 1, 0.9, 3.6, 5.6, C.white);
+  thing(f, 1.25, 1.1, 1.4, 1.1, C.white, C.line);
+  thing(f, 2.95, 1.1, 1.4, 1.1, C.white, C.line);
+  thing(f, 1, 2.5, 3.6, 4, C.lav);
+  rect(f, 1, 2.9, 3.6, 0.25, C.lavDark);
+  thing(f, 4.9, 0.9, 1.2, 1.2, C.woodDark);
+  circle(f, 5.5, 1.5, 0.35, C.yellow);
+  // The open floor under the bed corner: plants and little tables.
+  plant(0.9, 7.6);
+  thing(f, 2.4, 7.7, 1.3, 1.3, C.woodLight);              // side table with a lamp
+  circle(f, 3.05, 8.35, 0.4, C.yellow);
+  circle(f, 3.6, 10.7, 1.1, C.woodDark, { stroke: C.dark, 'stroke-width': 0.18 }); // round table
+  circle(f, 3.6, 10.7, 0.3, C.pink);
+  thing(f, 1.5, 10.1, 1, 1.2, C.pink, C.pinkDark);          // floor cushions
+  thing(f, 4.9, 10.1, 1, 1.2, C.lav, C.lavDark);
   plant(0.9, 12.1);
+  plant(5.4, 12.1);
+  thing(f, 5.6, 7.7, 0.9, 0.9, C.pot);                      // a small plant on a stand
+  circle(f, 6.05, 8, 0.5, C.green);
 
   // Living room: couch on the top wall, rug, coffee table, TV facing the couch, a plant.
   thing(f, 8.6, 0.9, 6.4, 2, C.lav);
@@ -154,7 +162,7 @@ function drawStudio(svg) {
   rect(f, 33.9, 8.8, 1.3, 1.8, C.pink, { rx: 0.3 });
   [27, 28.4, 29.8].forEach((x) => circle(f, x, 13.1, 0.2, C.dark));
 
-  // Walls, with gaps for the front door, the bathroom door and the bed nook opening.
+  // Walls, with gaps for the front door and the bathroom door.
   const walls = group(svg, 'walls');
   const wall = (x, y, w, h) => { rect(walls, x, y, w, h, C.wall); rect(walls, x, y, w, Math.min(h, 0.2), C.wallTop); };
   wall(0, 0, 36, 0.6);
@@ -162,8 +170,6 @@ function drawStudio(svg) {
   wall(0, 0, 0.6, 14);
   wall(35.4, 0, 0.6, 8.6);
   wall(35.4, 10.8, 0.6, 3.2);
-  wall(6.1, 0.6, 0.5, 4);         // bed nook: side wall, then a curtain
-  wall(0.6, 7, 4, 0.5);           // bed nook: front wall, open at the corner
   wall(24.8, 0.6, 0.6, 7.6);      // bathroom
   wall(24.8, 7.6, 3.4, 0.6);
   wall(31, 7.6, 4.4, 0.6);

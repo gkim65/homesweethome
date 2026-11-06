@@ -27,10 +27,10 @@ doing, which room it is in, what kind of task it is, and when you last did it.
   "whenever" and have no bar.
 - **Filter and search.** Light up one or more room or type chips, or search names and notes.
 - **Our place, as a floorplan.** A bird's-eye pixel drawing of our apartment, drawn from a sketch
-  of it, sits in the middle of the page. Along the top: the bed nook, living room, kitchen (with a
+  of it, sits in the middle of the page. Along the top: the bed corner (open to the living room), living room, kitchen (with a
   peninsula counter) and bathroom. Along the bottom: the desk, the closet with the washer and dryer
   inside, and the hallway to the front door. Each room you use lights up in its spot, picked from
-  keywords in its name ("Bedroom" goes in the bed nook, "Linen closet" or "Laundry" in the closet).
+  keywords in its name ("Bedroom" goes in the bed corner, "Linen closet" or "Laundry" in the closet).
   Spots with chores due glow soft pink with dust puffs; clean ones twinkle. Tap a spot to see only
   its chores (tap again to see everything). Rooms with no spot, and chores with no room, are listed
   under the plan. On phones you can swipe the plan sideways. *hide map* tucks it away. To change
