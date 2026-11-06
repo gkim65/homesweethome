@@ -167,14 +167,13 @@ function choreRow({ c, last, st }) {
   const doneToday = last === todayISO();
   const fill = st.key === 'never' ? 1 : st.key === 'whenever' ? 0 : Math.min(1, st.ratio);
   const sub = [view.group !== 'room' && c.room, view.group !== 'type' && c.type, everyText(c.everyDays)].filter(Boolean).join(' · ');
-  return el('li', { class: `chore st-${st.key}${['overdue', 'due', 'never'].includes(st.key) ? ' rgb-glow' : ''}` },
+  return el('li', { class: `chore st-${st.key}${['overdue', 'due', 'never'].includes(st.key) ? ' needs-love' : ''}` },
     el('button', { class: 'chore-main', onclick: () => openEditor(c), 'aria-label': `Edit ${c.name}` },
       el('span', { class: 'chore-icon', style: { '--hue': hueFor(typeName(c)) } }, pixelSvg(typeIcon(c.type, c.name), 26)),
       el('span', { class: 'chore-text' },
         el('span', { class: 'chore-name', text: c.name }),
         el('span', { class: 'chore-sub', text: sub }),
-        el('span', { class: 'meter', title: 'dust meter', role: 'img', 'aria-label': `dust meter ${Math.round(fill * 100)}%` },
-          el('span', { class: 'meter-fill', style: { '--fill': fill.toFixed(3) } }))),
+        meterRow(c, st, fill)),
       el('span', { class: 'chore-when' },
         el('span', { class: `pill st-${st.key}`, text: st.label }),
         el('span', { class: 'ago', text: last ? `done ${agoText(Math.max(0, st.days))}` : '' }))),
@@ -184,6 +183,21 @@ function choreRow({ c, last, st }) {
       'aria-label': doneToday ? `${c.name} done today, tap to undo` : `Mark ${c.name} done today`,
       onclick: (e) => toggleDoneToday(c, e.currentTarget),
     }, pixelSvg('check', 22)));
+}
+
+/**
+ * meterRow(chore, status, fill) -> HTMLElement|null
+ *
+ * The bar under a chore: days since it was last done out of its schedule, e.g. "3 of 7 days".
+ * It is full on the day the chore is due. Chores with no schedule have no bar.
+ */
+function meterRow(c, st, fill) {
+  if (!c.everyDays) return null;
+  const days = st.key === 'never' ? null : Math.max(0, st.days);
+  const label = days == null ? 'not done yet' : `${days} of ${c.everyDays} day${c.everyDays === 1 ? '' : 's'}`;
+  return el('span', { class: `meter-row${fill >= 1 ? ' meter-full' : ''}`, title: 'days since you last did it, out of how often it repeats' },
+    el('span', { class: 'meter', 'aria-hidden': 'true' }, el('span', { class: 'meter-fill', style: { '--fill': fill.toFixed(3) } })),
+    el('span', { class: 'meter-label', text: label }));
 }
 
 // ── Marking chores done ────────────────────────────────────────────────
@@ -215,7 +229,7 @@ function toggleDoneToday(chore, button) {
   }
 }
 
-/** A little burst of rainbow pixels from a button. */
+/** A little burst of pastel pixels from a button. */
 function sparkle(from) {
   if (calm() || !from) return;
   const r = from.getBoundingClientRect();
@@ -226,7 +240,7 @@ function sparkle(from) {
       class: 'burst',
       style: {
         left: `${r.left + r.width / 2}px`, top: `${r.top + r.height / 2}px`,
-        '--dx': `${Math.cos(a) * d}px`, '--dy': `${Math.sin(a) * d}px`, '--hue': String((i * 26) % 360),
+        '--dx': `${Math.cos(a) * d}px`, '--dy': `${Math.sin(a) * d}px`, '--c': ['#ff8fb8', '#c3a4ff', '#ffd6e6', '#ffe08a'][i % 4],
       },
     });
     document.body.append(p);

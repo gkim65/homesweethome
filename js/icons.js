@@ -390,11 +390,14 @@ export { ICONS };
 /**
  * hueFor(text) -> number
  *
- * A stable rainbow hue (0–359) for a room or type name, so each one keeps its own colour.
+ * A stable hue for a room or type name, picked from a small set of soft pastels (pinks, lavenders,
+ * peach, mint, sky), so each one keeps its own colour without turning into a rainbow.
  */
+const SOFT_HUES = [340, 315, 285, 265, 20, 160, 205];
+
 export function hueFor(text) {
   const t = String(text || '').toLowerCase();
   let h = 7;
-  for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) % 3600;
-  return Math.round(h / 10);
+  for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) % 9973;
+  return SOFT_HUES[h % SOFT_HUES.length];
 }

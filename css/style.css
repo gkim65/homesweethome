@@ -1,4 +1,4 @@
-/* Theme tokens and layout for Home Sweet Home: a cozy pixel-game look, with RGB everywhere. */
+/* Theme tokens and layout for Home Sweet Home: a cozy pixel-game look in soft pinks and lavenders. */
 
 :root[data-theme="light"] {
   color-scheme: light;
@@ -13,8 +13,8 @@
   --frame-drop: rgba(80, 50, 110, 0.35);
   --accent: #ff5d8f;
   --ink: #3b2a4d;
-  --sat: 85%;
-  --lum: 62%;
+  --sat: 65%;
+  --lum: 70%;
   --tint: 95%;
   --tint-sat: 85%;
   --cloud-opacity: 0.95;
@@ -52,14 +52,17 @@
   --font-body: 'Nunito', system-ui, sans-serif;
   --font-pixel: 'Silkscreen', 'Courier New', monospace;
   --radius: 14px;
-  /* Rainbow stops; each user writes conic-gradient(from var(--spin), …) itself so the spin animates there. */
-  --rainbow-stops: #ff5d8f, #ff9f43, #ffd93d, #4cd97b, #6fd6ff, #4d7cff, #b06cff, #ff5d8f;
-  --rainbow-line: linear-gradient(90deg, #ff5d8f, #ff9f43, #ffd93d, #4cd97b, #6fd6ff, #4d7cff, #b06cff);
+  /* The soft glow used for logos, due chores and due rooms. */
+  --glow: #ff8fb8;
+  --glow-2: #c3a4ff;
+  --soft-line: linear-gradient(90deg, #ffa3c4, #d9b8ff);
 }
 
-@property --spin { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
-@keyframes spin { to { --spin: 360deg; } }
-@keyframes hue { to { filter: hue-rotate(360deg); } }
+/* A gentle pulse for things that need attention. */
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 143, 184, 0); }
+  50% { box-shadow: 0 0 0 4px rgba(255, 143, 184, 0.35); }
+}
 
 * { box-sizing: border-box; }
 html, body { margin: 0; }
@@ -145,14 +148,13 @@ input:focus-visible, textarea:focus-visible, .btn:focus-visible, button:focus-vi
 .tagline { color: var(--text); font-size: 14px; font-weight: 700; opacity: 0.8; }
 .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 
-/* The RGB ring: a slowly turning rainbow border around pixel icons. */
-.rgb-ring { position: relative; display: inline-grid; place-items: center; padding: 6px; border-radius: 14px; background: var(--panel); isolation: isolate; }
-.rgb-ring::before, .rgb-ring::after {
-  content: ''; position: absolute; inset: -3px; border-radius: 16px;
-  background: conic-gradient(from var(--spin), var(--rainbow-stops)); animation: spin 4s linear infinite;
+/* The logo frame: a soft pink-to-lavender ring with a gentle glow. */
+.glow-ring {
+  display: inline-grid; place-items: center; padding: 6px; border-radius: 14px; background: var(--panel);
+  border: 3px solid transparent;
+  background: linear-gradient(var(--panel), var(--panel)) padding-box, linear-gradient(135deg, var(--glow), var(--glow-2)) border-box;
+  box-shadow: 0 0 12px rgba(255, 143, 184, 0.45);
 }
-.rgb-ring::before { z-index: -1; }
-.rgb-ring::after { z-index: -2; filter: blur(10px); opacity: 0.55; }
 
 /* ── Sync button ── */
 .sync-wrap { position: relative; }
@@ -189,25 +191,20 @@ input:focus-visible, textarea:focus-visible, .btn:focus-visible, button:focus-vi
 .exp { position: relative; display: block; height: 16px; margin: 8px 12px 0; background: var(--panel-2); border: 2px solid var(--frame); border-radius: 5px; overflow: hidden; }
 .exp-fill {
   display: block; height: 100%; width: calc(var(--fill, 0) * 100%); transition: width 0.6s;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0 40%, transparent 60%), var(--rainbow-line);
-  animation: hue 6s linear infinite;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0 40%, transparent 60%), var(--soft-line);
 }
 .exp-text { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--font-pixel); font-size: 10px; color: var(--text); text-shadow: 0 0 3px var(--panel), 0 0 3px var(--panel); }
 
 /* Bun */
 .bun-wrap { position: relative; display: grid; justify-items: center; }
 .bun-btn { position: relative; background: none; border: none; padding: 0; cursor: pointer; display: grid; justify-items: center; }
-.bun-body { animation: bob 1.6s ease-in-out infinite; transform-origin: 50% 100%; filter: drop-shadow(0 0 8px rgba(255, 120, 220, 0.55)); }
+.bun-body { animation: bob 1.6s ease-in-out infinite; transform-origin: 50% 100%; filter: drop-shadow(0 0 6px rgba(255, 143, 184, 0.45)); }
 .bun-shadow { width: 46px; height: 8px; margin-top: -4px; border-radius: 50%; background: rgba(40, 20, 60, 0.25); }
 .bun .ink { fill: #3b2a4d; }
-.bun .mb { animation: rgb-fill 4s linear infinite; }
+.bun .mb { fill: #ffc4dc; }
 .bun .mp { fill: #ffb3d1; }
 .bun .mc { fill: #ff7fb0; }
 .bun .mw { fill: #ffffff; }
-@keyframes rgb-fill {
-  0%, 100% { fill: #ffa3c7; } 16% { fill: #ffc58a; } 33% { fill: #fff08a; }
-  50% { fill: #9cf0b0; } 66% { fill: #9fdcff; } 83% { fill: #c8a8ff; }
-}
 @keyframes bob { 0%, 100% { transform: translateY(0) scale(1, 1); } 50% { transform: translateY(-3px) scale(1.02, 0.98); } }
 .bun-body.jump { animation: jump 0.75s cubic-bezier(0.3, 0.7, 0.4, 1) 2, bob 1.6s ease-in-out 1.5s infinite; }
 .bun-body.spin { animation: jumpspin 1s cubic-bezier(0.3, 0.7, 0.4, 1) 2, bob 1.6s ease-in-out 2s infinite; }
@@ -239,9 +236,7 @@ input:focus-visible, textarea:focus-visible, .btn:focus-visible, button:focus-vi
   background: #fff; border-right: 3px solid #3b2a4d; border-bottom: 3px solid #3b2a4d; transform: rotate(45deg);
 }
 .bubble strong {
-  display: block; font-family: var(--font-pixel); font-size: 14px; color: #ff3d7f;
-  background: linear-gradient(90deg, #ff3d7f, #ff8a1f, #e0b000, #20b858, #1fa8e0, #3d6bff, #9a4dff);
-  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  display: block; font-family: var(--font-pixel); font-size: 14px; color: #ff4f8b;
 }
 .bubble p { margin: 3px 0 0; font-weight: 800; }
 .bubble p.quote { font-weight: 600; color: #7a5f96; }
@@ -271,8 +266,7 @@ input:focus-visible, textarea:focus-visible, .btn:focus-visible, button:focus-vi
 }
 .levelup strong {
   font-family: var(--font-pixel); font-size: clamp(36px, 9vw, 72px); line-height: 1; white-space: nowrap;
-  color: #ffd93d; text-shadow: 3px 0 0 #3b2a4d, -3px 0 0 #3b2a4d, 0 3px 0 #3b2a4d, 0 -3px 0 #3b2a4d, 5px 5px 0 #3b2a4d;
-  animation: hue 1.5s linear infinite;
+  color: #ffb3cf; text-shadow: 3px 0 0 #3b2a4d, -3px 0 0 #3b2a4d, 0 3px 0 #3b2a4d, 0 -3px 0 #3b2a4d, 5px 5px 0 #3b2a4d;
 }
 .levelup span { font-weight: 800; background: #fff; color: #3b2a4d; border: 3px solid #3b2a4d; border-radius: 999px; padding: 4px 14px; white-space: nowrap; }
 @keyframes levelup {
@@ -289,9 +283,9 @@ input:focus-visible, textarea:focus-visible, .btn:focus-visible, button:focus-vi
   position: relative; height: 64px; margin: 0 -14px;
   clip-path: polygon(50% 0, 100% 100%, 0 100%);
   background:
-    repeating-linear-gradient(180deg, transparent 0 9px, rgba(0, 0, 0, 0.18) 9px 12px),
-    linear-gradient(90deg, #ff5d8f, #ff9f43, #ffd93d, #4cd97b, #6fd6ff, #4d7cff, #b06cff);
-  animation: hue 8s linear infinite;
+    repeating-linear-gradient(180deg, transparent 0 9px, rgba(120, 40, 80, 0.18) 9px 12px),
+    repeating-linear-gradient(90deg, transparent 0 22px, rgba(120, 40, 80, 0.10) 22px 24px),
+    #ff9ebf;
 }
 .roof-sign {
   position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%); white-space: nowrap;
@@ -303,13 +297,8 @@ input:focus-visible, textarea:focus-visible, .btn:focus-visible, button:focus-vi
   display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-flow: dense; gap: 6px;
   padding: 6px; background: #3b2a4d; border-radius: 0 0 8px 8px;
 }
-/* An RGB glow around the whole house */
-.rooms::before, .rooms::after {
-  content: ''; position: absolute; inset: -4px; border-radius: 0 0 11px 11px;
-  background: conic-gradient(from var(--spin), var(--rainbow-stops)); animation: spin 5s linear infinite;
-}
-.rooms::before { z-index: -1; }
-.rooms::after { z-index: -2; filter: blur(12px); opacity: 0.5; }
+/* A soft pink glow around the whole house */
+.rooms { box-shadow: 0 0 0 3px var(--glow), 0 0 16px rgba(255, 143, 184, 0.45); }
 .rooms-empty { grid-column: 1 / -1; margin: 0; padding: 26px 10px; text-align: center; font-weight: 700; background: var(--panel-2); color: var(--muted); border-radius: 6px; }
 .porch { height: 10px; margin: 4px 30% 0; background: var(--dirt); border: 3px solid var(--frame); border-radius: 0 0 6px 6px; }
 .map-hint { margin: 8px 0 0; text-align: center; font-size: 12px; font-weight: 700; }
@@ -337,12 +326,12 @@ input:focus-visible, textarea:focus-visible, .btn:focus-visible, button:focus-vi
 .room-badge { font-size: 11px; font-weight: 800; padding: 1px 8px; border-radius: 999px; background: rgba(255, 255, 255, 0.9); color: #3b2a4d; border: 2px solid #3b2a4d; white-space: nowrap; }
 .state-due .room-badge { background: #ff5d8f; color: #fff; }
 .state-soon .room-badge { background: #fff1c7; }
-/* Rooms with chores due get a turning RGB frame */
+/* Rooms with chores due get a pink frame that gently pulses */
 .room-tile.state-due::before {
-  content: ''; position: absolute; inset: 0; border-radius: 6px; padding: 4px; pointer-events: none;
-  background: conic-gradient(from var(--spin), var(--rainbow-stops)); animation: spin 3s linear infinite;
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude;
+  content: ''; position: absolute; inset: 0; border-radius: 6px; pointer-events: none;
+  box-shadow: inset 0 0 0 3px var(--glow); animation: tilepulse 2.4s ease-in-out infinite;
 }
+@keyframes tilepulse { 50% { box-shadow: inset 0 0 0 5px rgba(255, 143, 184, 0.7); } }
 /* Dust puffs (due) and twinkles (clean) */
 .fx { position: absolute; width: 8px; height: 8px; pointer-events: none; opacity: 0; }
 .fx1 { left: 12%; top: 18%; }
@@ -379,7 +368,7 @@ input:focus-visible, textarea:focus-visible, .btn:focus-visible, button:focus-vi
 .group { --hue: 320; overflow: hidden; }
 .group-head {
   display: flex; align-items: center; gap: 10px; padding: 8px 12px;
-  background: linear-gradient(180deg, hsl(var(--hue) 90% 82%), hsl(var(--hue) 75% 70%));
+  background: linear-gradient(180deg, hsl(var(--hue) 75% 86%), hsl(var(--hue) 60% 76%));
   border-bottom: 3px solid var(--frame);
   box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.5);
 }
@@ -404,7 +393,8 @@ input:focus-visible, textarea:focus-visible, .btn:focus-visible, button:focus-vi
 
 .chores { list-style: none; margin: 0; padding: 8px; display: grid; gap: 8px; }
 .chore { position: relative; display: flex; align-items: stretch; gap: 6px; background: var(--panel); border: 2px solid var(--border); border-radius: 12px; }
-.chore.rgb-glow { border-color: transparent; background: linear-gradient(var(--panel), var(--panel)) padding-box, conic-gradient(from var(--spin), var(--rainbow-stops)) border-box; animation: spin 5s linear infinite; }
+/* Chores that need doing get a soft pink border with a gentle pulse. */
+.chore.needs-love { border-color: var(--glow); animation: pulse 2.6s ease-in-out infinite; }
 .chore-main {
   flex: 1; min-width: 0; display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center;
   font: inherit; color: inherit; text-align: left; background: none; border: none; padding: 8px 4px 8px 10px; cursor: pointer; border-radius: 10px;
@@ -420,13 +410,15 @@ input:focus-visible, textarea:focus-visible, .btn:focus-visible, button:focus-vi
 .chore-when { display: grid; justify-items: end; gap: 3px; }
 .ago { font-size: 11px; color: var(--muted); white-space: nowrap; }
 
-/* The dust meter: chunky pixel segments that fill as the chore comes due. */
-.meter { display: block; height: 8px; margin-top: 3px; border-radius: 3px; background: var(--panel-2); overflow: hidden; max-width: 180px; }
+/* Days since last done, out of the chore's schedule: a little bar plus "3 of 7 days". */
+.meter-row { display: flex; align-items: center; gap: 8px; margin-top: 3px; }
+.meter { flex: 0 1 120px; display: block; height: 8px; border-radius: 4px; background: var(--panel-2); overflow: hidden; border: 1px solid var(--border); }
 .meter-fill {
-  display: block; height: 100%; width: calc(var(--fill) * 100%);
-  background: repeating-linear-gradient(90deg, transparent 0 7px, var(--panel) 7px 9px), linear-gradient(90deg, #4cd97b, #ffd93d 60%, #ff9f43 85%, #ff5d8f);
-  background-size: auto, 180px 100%;
+  display: block; height: 100%; width: calc(var(--fill) * 100%); border-radius: 4px;
+  background: repeating-linear-gradient(90deg, transparent 0 7px, rgba(255, 255, 255, 0.55) 7px 9px), #c3a4ff;
 }
+.meter-full .meter-fill { background-color: var(--glow); }
+.meter-label { font-size: 11px; font-weight: 700; color: var(--muted); white-space: nowrap; }
 
 .done-btn { flex: none; width: 52px; display: grid; place-items: center; cursor: pointer; background: var(--panel-2); border: none; border-left: 2px dashed var(--border); border-radius: 0 10px 10px 0; }
 .done-btn .pix { opacity: 0.35; filter: grayscale(1); transition: transform 0.15s, opacity 0.15s; }
@@ -435,7 +427,7 @@ input:focus-visible, textarea:focus-visible, .btn:focus-visible, button:focus-vi
 :root[data-theme="dark"] .done-btn.is-done { background: #193d2a; }
 .done-btn.is-done .pix { opacity: 1; filter: none; }
 
-.burst { position: fixed; width: 7px; height: 7px; pointer-events: none; z-index: 100; background: hsl(var(--hue) 95% 62%); animation: burst 0.7s ease-out forwards; }
+.burst { position: fixed; width: 7px; height: 7px; pointer-events: none; z-index: 100; background: var(--c); animation: burst 0.7s ease-out forwards; }
 @keyframes burst {
   from { transform: translate(-50%, -50%) scale(1); opacity: 1; }
   to { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.3); opacity: 0; }

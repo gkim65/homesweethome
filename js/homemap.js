@@ -1,4 +1,4 @@
-// The little RGB house map: one tile per room, glowing when chores there are due.
+// The little house map: one tile per room, glowing pink when chores there are due.
 
 import { el } from './dom.js';
 import { hueFor, pixelSvg, roomIcon } from './icons.js';

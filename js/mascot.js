@@ -1,7 +1,7 @@
-// Bun, the RGB dust bunny: hops around, cheers when you finish chores, and celebrates level-ups.
+// Bun, the pink dust bunny: hops around, cheers when you finish chores, and celebrates level-ups.
 //
-// Bun is drawn as 16x16 pixel art. Only its body pixels (class `mb`) change colour, cycling
-// through the rainbow in CSS; the outline, ears, cheeks and eye shine keep their own colours.
+// Bun is drawn as 16x16 pixel art. Each pixel's colour comes from CSS by its class (body `mb`,
+// inner ears `mp`, cheeks `mc`, eye shine `mw`, outline `ink`).
 
 import { calm, el } from './dom.js';
 
@@ -164,7 +164,7 @@ export function floatText(from, text, cls = '') {
   setTimeout(() => t.remove(), 3000);
 }
 
-/** A big rainbow "LEVEL UP!" across the screen. */
+/** A big "LEVEL UP!" across the screen. */
 export function levelUpBanner(level, title) {
   const b = el('div', { class: 'levelup', role: 'status' },
     el('strong', { text: 'LEVEL UP!' }), el('span', { text: `Lv. ${level} · ${title}` }));
