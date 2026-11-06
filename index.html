@@ -27,6 +27,7 @@
 <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
+<div class="sky" id="sky" aria-hidden="true"></div>
 <header class="topbar">
   <div class="brand">
     <span class="logo rgb-ring" id="logo"></span>
@@ -52,6 +53,25 @@
 </header>
 
 <main class="page">
+  <section class="scene" aria-label="Your home and Bun, your cleaning buddy">
+    <div class="player window">
+      <div class="window-title">my buddy</div>
+      <div class="bun-spot" id="bun-spot"></div>
+      <div class="nameplate"><span class="lv" id="lv"></span><span class="lv-title" id="lv-title"></span></div>
+      <div class="exp" role="img" aria-label="experience bar"><span class="exp-fill" id="exp-fill"></span><span class="exp-text" id="exp-text"></span></div>
+    </div>
+    <div class="house-wrap window">
+      <div class="window-title">my home <button class="mini" id="map-toggle" type="button">hide map</button></div>
+      <div class="house" id="house">
+        <div class="roof"><span class="roof-sign">home sweet home</span></div>
+        <div class="rooms" id="rooms"></div>
+        <div class="porch"></div>
+      </div>
+      <p class="map-hint muted">tap a room to see its chores</p>
+    </div>
+    <div class="ground" aria-hidden="true"></div>
+  </section>
+
   <section class="summary" id="summary" aria-label="How your home is doing"></section>
 
   <section class="controls" aria-label="Find and filter chores">

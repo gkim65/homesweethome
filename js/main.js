@@ -1,36 +1,17 @@
 // Wires the page together: drawing the chore board, the editor, marking chores done, and sync.
 
+import { calm, el } from './dom.js';
+import { renderHomeMap } from './homemap.js';
 import { hueFor, pixelSvg, roomIcon, typeIcon } from './icons.js';
+import { cheerLines, createBun, floatText, levelUpBanner } from './mascot.js';
 import { forgetSheetId, sheetUrl } from './sheet.js';
 import {
-  agoText, choreStatus, emptyStore, eraseStore, everyText, formatDate, lastDoneMap, loadStore,
+  agoText, choreStatus, emptyStore, eraseStore, everyText, EXP_PER_CHORE, formatDate, lastDoneMap, levelInfo, loadStore,
   newId, normalizeData, saveStore, starterChores, todayISO,
 } from './store.js';
 import { createSync } from './sync.js';
 
 const $ = (id) => document.getElementById(id);
-
-/**
- * el(tag, props, ...children) -> HTMLElement
- *
- * Build an element. Text always goes in as text (never HTML), so nothing typed can run as code.
- *
- *   - `props` — `class`, `text`, `dataset`, `on<Event>` handlers, or any attribute
- */
-function el(tag, props = {}, ...children) {
-  const node = document.createElement(tag);
-  Object.entries(props).forEach(([k, v]) => {
-    if (v == null || v === false) return;
-    if (k === 'class') node.className = v;
-    else if (k === 'text') node.textContent = v;
-    else if (k === 'dataset') Object.assign(node.dataset, v);
-    else if (k === 'style') Object.entries(v).forEach(([p, val]) => node.style.setProperty(p, val));
-    else if (k.startsWith('on')) node.addEventListener(k.slice(2).toLowerCase(), v);
-    else node.setAttribute(k, v === true ? '' : v);
-  });
-  children.flat().forEach((c) => { if (c != null && c !== false) node.append(c); });
-  return node;
-}
 
 // ── State ──────────────────────────────────────────────────────────────
 
@@ -79,6 +60,15 @@ function render() {
   [...view.types].forEach((t) => { if (!types.some(([n]) => n === t)) view.types.delete(t); });
 
   renderSummary(items);
+  renderPlayer();
+  renderHomeMap($('rooms'), rooms.map(([name, total]) => {
+    const here = items.filter((x) => roomName(x.c) === name);
+    return {
+      name, total, iconKey: name === ROOMLESS ? '' : name,
+      due: here.filter((x) => ['overdue', 'due', 'never'].includes(x.st.key)).length,
+      soon: here.filter((x) => x.st.key === 'soon').length,
+    };
+  }), view.rooms, pickRoom);
   renderChips($('room-chips'), rooms, view.rooms, (n) => roomIcon(n === ROOMLESS ? '' : n));
   renderChips($('type-chips'), types, view.types, (n) => typeIcon(n === TYPELESS ? '' : n));
   fillDatalist($('room-options'), ['Kitchen', 'Bedroom', 'Bathroom', 'Hallway', 'Living room', 'Laundry room', 'Office', 'Garden'], data.chores.map((c) => c.room));
@@ -114,6 +104,23 @@ function render() {
     }));
   }
   groups.filter((g) => g.list.length).forEach((g) => board.append(groupCard(g)));
+}
+
+/** Click a room on the house map: show only its chores (click again to show everything). */
+function pickRoom(name) {
+  const only = view.rooms.size === 1 && view.rooms.has(name);
+  view.rooms = only ? new Set() : new Set([name]);
+  render();
+  if (!only) $('board').scrollIntoView({ behavior: calm() ? 'auto' : 'smooth', block: 'start' });
+}
+
+/** Level, title and EXP bar under Bun. */
+function renderPlayer() {
+  const lv = levelInfo(data.history.length);
+  $('lv').textContent = `Lv. ${lv.level}`;
+  $('lv-title').textContent = lv.title;
+  $('exp-fill').style.setProperty('--fill', lv.pct.toFixed(3));
+  $('exp-text').textContent = `EXP ${lv.exp} / ${lv.need}`;
 }
 
 function renderSummary(items) {
@@ -190,17 +197,27 @@ function toggleDoneToday(chore, button) {
     return;
   }
   sparkle(button);
+  floatText(button, `+${EXP_PER_CHORE} EXP`, 'exp');
+  const before = levelInfo(data.history.length);
   const entry = { id: newId(), choreId: chore.id, date: today };
   commit({ ...data, history: [...data.history, entry] });
-  toast(`"${chore.name}" done! ${cheer()}`, () => commit({ ...data, history: data.history.filter((h) => h.id !== entry.id) }));
-}
+  toast(`"${chore.name}" done ✓`, () => commit({ ...data, history: data.history.filter((h) => h.id !== entry.id) }));
 
-const CHEERS = ['so sparkly ✨', 'home sweet home 🏡', 'nice work!', 'look at you go!', 'cozy points +1', 'fresh as a daisy 🌼'];
-const cheer = () => CHEERS[Math.floor(Math.random() * CHEERS.length)];
+  const after = levelInfo(data.history.length);
+  const doneToday = data.history.filter((h) => h.date === today).length;
+  const last = lastDoneMap(data);
+  const allClean = data.chores.every((c) => !['overdue', 'due', 'never'].includes(choreStatus(c, last.get(c.id) || '').key));
+  if (after.level > before.level) {
+    levelUpBanner(after.level, after.title);
+    bun.say([`LEVEL UP!! Lv. ${after.level}!`, `You're a ${after.title} now!`, cheerLines({ doneToday, allClean })[1]], { big: true });
+  } else {
+    bun.say(cheerLines({ doneToday, allClean }), { big: allClean });
+  }
+}
 
 /** A little burst of rainbow pixels from a button. */
 function sparkle(from) {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !from) return;
+  if (calm() || !from) return;
   const r = from.getBoundingClientRect();
   for (let i = 0; i < 14; i++) {
     const a = (Math.PI * 2 * i) / 14 + Math.random() * 0.3;
@@ -423,6 +440,30 @@ themeBtn.addEventListener('click', () => {
 drawThemeBtn();
 
 $('logo').append(pixelSvg('house', 40));
+const bun = createBun($('bun-spot'), document.body);
+bun.setIdleLine(() => {
+  const last = lastDoneMap(data);
+  const due = data.chores.filter((c) => ['overdue', 'due', 'never'].includes(choreStatus(c, last.get(c.id) || '').key)).length;
+  const today = data.history.filter((h) => h.date === todayISO()).length;
+  if (!data.chores.length) return ['hi, I\'m Bun!', 'Add a chore and I\'ll cheer you on!'];
+  if (!due) return ['hi hi!', 'Everything is sparkly! Wanna rest with me?'];
+  return ['hi hi!', `${due} ${due === 1 ? 'chore could' : 'chores could'} use some love.`, today ? `You've done ${today} today already!` : 'You got this! 💪'];
+});
+// Drifting pixel clouds behind everything.
+const sky = $('sky');
+[[8, 120, 70], [22, 80, 95], [40, 150, 120], [62, 96, 80], [78, 130, 140]].forEach(([top, size, secs], i) => {
+  sky.append(el('span', { class: 'cloud', style: { top: `${top}%`, '--secs': `${secs}s`, '--delay': `${-i * secs / 2.3}s` } }, pixelSvg('cloud', size)));
+});
+const mapToggle = $('map-toggle');
+function showMap(on) {
+  $('house').hidden = !on;
+  mapToggle.textContent = on ? 'hide map' : 'show map';
+  try { localStorage.setItem('hsh_map', on ? '1' : '0'); } catch (e) {}
+}
+mapToggle.addEventListener('click', () => showMap($('house').hidden));
+let mapPref = '1';
+try { mapPref = localStorage.getItem('hsh_map') ?? '1'; } catch (e) {}
+showMap(mapPref !== '0');
 document.querySelector('.welcome-logo').append(pixelSvg('house', 64));
 $('empty').querySelector('.empty-icon').append(pixelSvg('broom', 56));
 

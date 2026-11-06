@@ -200,3 +200,25 @@ export function starterChores() {
   });
   return { chores, history };
 }
+
+/** EXP for each chore done. */
+export const EXP_PER_CHORE = 10;
+const TITLES = ['Dust Bunny Rookie', 'Tidy Sprout', 'Bubble Apprentice', 'Broom Knight', 'Mop Mage',
+  'Suds Sorcerer', 'Sparkle Ranger', 'Cozy Guardian', 'Home Hero', 'Legend of Sparkle'];
+
+/**
+ * levelInfo(doneCount) -> { level, title, exp, need, pct }
+ *
+ * Your level from how many times you have done any chore (each is EXP_PER_CHORE). Level 1 → 2
+ * takes 3 chores, then each level takes 2 more than the last.
+ *
+ *   - `exp`/`need` — EXP into the current level, and EXP needed to finish it
+ *   - `pct`        — exp / need, 0–1
+ */
+export function levelInfo(doneCount) {
+  let exp = Math.max(0, doneCount) * EXP_PER_CHORE;
+  let level = 1;
+  let need = 30;
+  while (exp >= need) { exp -= need; level += 1; need = 30 + 20 * (level - 1); }
+  return { level, title: TITLES[Math.min(level - 1, TITLES.length - 1)], exp, need, pct: exp / need };
+}

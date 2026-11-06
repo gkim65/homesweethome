@@ -25,6 +25,17 @@ doing, which room it is in, what kind of task it is, and when you last did it.
   fills as the days pass. Due and overdue chores get a turning RGB border. Chores with no schedule
   are "whenever".
 - **Filter and search.** Light up one or more room or type chips, or search names and notes.
+- **Your home map.** A little pixel house sits in the middle of the page with a tile for each
+  room. Each tile has its own floor (tiles, wood, carpet or grass). Rooms with chores due get a
+  turning RGB frame and dust puffs, and clean rooms twinkle. Tap a room to see only its chores (tap
+  again to see everything). *hide map* tucks it away.
+- **Bun, your cleaning buddy.** An RGB dust bunny who hops about and cheers whenever you finish a
+  chore ("omg great job!! You finished 3 chores today! You should…"). If you have scrolled down,
+  Bun pops up in the corner instead. Tap Bun to say hi. The encouragements are written for this
+  app; they are not quotes from anyone.
+- **Levels and EXP.** Every chore done is +10 EXP. Fill the bar to level up, from *Dust Bunny
+  Rookie* to *Legend of Sparkle*. Your level is worked out from the History tab, so it is the same
+  on every device.
 
 ## Your data and privacy
 
@@ -107,8 +118,11 @@ different addresses). After changing code, hard reload (Cmd+Shift+R).
 | Path | What it holds |
 |---|---|
 | `index.html` | page layout, dialogs, security policy |
-| `css/style.css` | light and dark themes, RGB borders, phone layout |
+| `css/style.css` | light (day sky) and dark (night sky) themes, game-window panels, RGB borders, animations, phone layout |
 | `js/main.js` | the board, editor, marking chores done, wiring |
+| `js/homemap.js` | the little house map |
+| `js/mascot.js` | Bun, the cheers, floating EXP and the level-up banner |
+| `js/dom.js` | building page elements safely |
 | `js/icons.js` | the pixel-art icons and which room/type gets which |
 | `js/store.js` | the data shape, due dates, saving in the browser |
 | `js/sync.js` | the three-way merge and sync loop |
