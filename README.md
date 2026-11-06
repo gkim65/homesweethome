@@ -26,13 +26,15 @@ doing, which room it is in, what kind of task it is, and when you last did it.
   day it is due. Due and overdue chores get a soft pink border. Chores with no schedule are
   "whenever" and have no bar.
 - **Filter and search.** Light up one or more room or type chips, or search names and notes.
-- **Your studio floorplan.** A bird's-eye pixel drawing of a little studio apartment sits in the
-  middle of the page: kitchenette, desk nook, living area, bed corner, bathroom, laundry nook,
-  entryway and balcony. Each room you use lights up in its spot (picked from keywords in its name,
-  so "Bedroom", "Guest bedroom" and "Nursery" all go in the bed corner). Spots with chores due glow
-  soft pink with dust puffs; clean ones twinkle. Tap a spot to see only its chores (tap again to see
-  everything). Rooms with no spot, like "Linen closet", are listed under the plan. *hide map* tucks
-  it away.
+- **Our place, as a floorplan.** A bird's-eye pixel drawing of our apartment, drawn from a sketch
+  of it, sits in the middle of the page. Along the top: the bed nook, living room, kitchen (with a
+  peninsula counter) and bathroom. Along the bottom: the desk, the closet with the washer and dryer
+  inside, and the hallway to the front door. Each room you use lights up in its spot, picked from
+  keywords in its name ("Bedroom" goes in the bed nook, "Linen closet" or "Laundry" in the closet).
+  Spots with chores due glow soft pink with dust puffs; clean ones twinkle. Tap a spot to see only
+  its chores (tap again to see everything). Rooms with no spot, and chores with no room, are listed
+  under the plan. On phones you can swipe the plan sideways. *hide map* tucks it away. To change
+  the layout, edit `ZONES` and `drawStudio` in [js/homemap.js](js/homemap.js).
 - **Bun, your cleaning buddy.** A pink pixel dust bunny who hops about and cheers whenever you finish a
   chore ("omg great job!! You finished 3 chores today! You should…"). If you have scrolled down,
   Bun pops up in the corner instead. Tap Bun to say hi. The encouragements are written for this
@@ -124,7 +126,7 @@ different addresses). After changing code, hard reload (Cmd+Shift+R).
 | `index.html` | page layout, dialogs, security policy |
 | `css/style.css` | light (day sky) and dark (night sky) themes, game-window panels, animations, phone layout |
 | `js/main.js` | the board, editor, marking chores done, wiring |
-| `js/homemap.js` | the studio floorplan |
+| `js/homemap.js` | the floorplan of our place |
 | `js/mascot.js` | Bun, the cheers, floating EXP and the level-up banner |
 | `js/dom.js` | building page elements safely |
 | `js/icons.js` | the pixel-art icons and which room/type gets which |
