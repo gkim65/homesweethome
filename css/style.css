@@ -276,73 +276,52 @@ input:focus-visible, textarea:focus-visible, .btn:focus-visible, button:focus-vi
   100% { transform: translate(-50%, -80%) scale(1); opacity: 0; }
 }
 
-/* ── The house map ── */
+/* ── The studio floorplan ── */
 .house-wrap { padding: 0 0 10px; min-width: 0; }
-.house { position: relative; margin: 6px 22px 0; }
-.roof {
-  position: relative; height: 64px; margin: 0 -14px;
-  clip-path: polygon(50% 0, 100% 100%, 0 100%);
-  background:
-    repeating-linear-gradient(180deg, transparent 0 9px, rgba(120, 40, 80, 0.18) 9px 12px),
-    repeating-linear-gradient(90deg, transparent 0 22px, rgba(120, 40, 80, 0.10) 22px 24px),
-    #ff9ebf;
+.house { margin: 0 auto; padding: 0 14px; max-width: 640px; }
+.plan {
+  position: relative; border-radius: 10px; overflow: hidden;
+  background: #cfe6c8; /* a little lawn around the studio */
+  border: 3px solid var(--frame);
 }
-.roof-sign {
-  position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%); white-space: nowrap;
-  font-family: var(--font-pixel); font-size: 11px; color: #fff; text-shadow: 1px 1px 0 #3b2a4d;
-  background: rgba(59, 42, 77, 0.6); padding: 1px 8px; border-radius: 4px;
-}
-.rooms {
-  position: relative; isolation: isolate;
-  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-flow: dense; gap: 6px;
-  padding: 6px; background: #3b2a4d; border-radius: 0 0 8px 8px;
-}
-/* A soft pink glow around the whole house */
-.rooms { box-shadow: 0 0 0 3px var(--glow), 0 0 16px rgba(255, 143, 184, 0.45); }
-.rooms-empty { grid-column: 1 / -1; margin: 0; padding: 26px 10px; text-align: center; font-weight: 700; background: var(--panel-2); color: var(--muted); border-radius: 6px; }
-.porch { height: 10px; margin: 4px 30% 0; background: var(--dirt); border: 3px solid var(--frame); border-radius: 0 0 6px 6px; }
-.map-hint { margin: 8px 0 0; text-align: center; font-size: 12px; font-weight: 700; }
+:root[data-theme="dark"] .plan { background: #2b4a35; }
+:root[data-theme="dark"] .plan-svg { filter: brightness(0.82) saturate(0.9); }
+.plan-svg { display: block; width: 100%; height: auto; }
+.plan-svg .zone { cursor: pointer; }
+.plan-svg .zone-area { stroke: transparent; stroke-width: 0.25; }
+.plan-svg .state-due .zone-area { fill: rgba(255, 143, 184, 0.18); stroke: #ff8fb8; stroke-dasharray: 0.6 0.35; animation: zonepulse 2.4s ease-in-out infinite; }
+.plan-svg .state-soon .zone-area, .plan-svg .state-clean .zone-area { stroke: rgba(195, 164, 255, 0.0); }
+.plan-svg .zone:hover .zone-area { fill: rgba(195, 164, 255, 0.18); stroke: #c3a4ff; }
+.plan-svg .picked .zone-area { fill: rgba(255, 143, 184, 0.22); stroke: #ff6fa3; stroke-width: 0.35; stroke-dasharray: none; }
+@keyframes zonepulse { 50% { fill: rgba(255, 143, 184, 0.32); } }
+.plan-svg .fx { opacity: 0; }
+.plan-svg .state-due .fx { animation: dust 2.6s ease-in-out infinite; }
+.plan-svg .state-clean .fx { animation: twinkle 2.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.plan-svg .fx2 { animation-delay: 0.9s !important; }
+.plan-svg .fx3 { animation-delay: 1.8s !important; }
+@keyframes dust { 0% { opacity: 0; transform: translate(0, 0); } 30%, 70% { opacity: 0.9; } 100% { opacity: 0; transform: translate(0.5px, -1px); } }
+@keyframes twinkle { 0%, 100% { opacity: 0; transform: scale(0.4); } 50% { opacity: 1; transform: scale(1); } }
 
-.room-tile {
-  --hue: 300;
-  position: relative; overflow: hidden; min-height: 96px; min-width: 0;
-  display: grid; justify-items: center; align-content: center; gap: 3px; padding: 10px 6px 8px;
-  font: inherit; color: #3b2a4d; cursor: pointer; border: none; border-radius: 6px;
-  background-color: hsl(var(--hue) 75% 90%);
-  transition: transform 0.15s;
+.plan-label {
+  position: absolute; transform: translate(-50%, -50%); z-index: 2;
+  display: grid; justify-items: center; gap: 1px; padding: 2px 7px 3px; max-width: 30%;
+  font: inherit; color: #3b2a4d; cursor: pointer;
+  background: rgba(255, 255, 255, 0.92); border: 2px solid #3b2a4d; border-radius: 8px;
+  box-shadow: 0 2px 0 rgba(59, 42, 77, 0.35);
 }
-:root[data-theme="dark"] .room-tile { background-color: hsl(var(--hue) 35% 34%); color: #f6eaff; }
-.room-tile.wide { grid-column: span 2; }
-.room-tile:hover { transform: translateY(-2px); }
-.room-tile.picked { box-shadow: inset 0 0 0 4px #fff, inset 0 0 0 8px hsl(var(--hue) 90% 60%); }
-/* Floors */
-.floor-tile { background-image: conic-gradient(rgba(255, 255, 255, 0.45) 25%, transparent 0 50%, rgba(255, 255, 255, 0.45) 0 75%, transparent 0); background-size: 18px 18px; }
-.floor-wood { background-image: repeating-linear-gradient(0deg, transparent 0 11px, rgba(120, 70, 30, 0.16) 11px 13px), repeating-linear-gradient(90deg, transparent 0 40px, rgba(120, 70, 30, 0.10) 40px 42px); }
-.floor-carpet { background-image: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.35) 0 8px, transparent 8px 16px); }
-.room-tile.floor-grass { background-color: #bdf0c3; background-image: radial-gradient(#7fd88d 1.5px, transparent 2px); background-size: 10px 10px; }
-:root[data-theme="dark"] .room-tile.floor-grass { background-color: #24553a; background-image: radial-gradient(#3f8a5a 1.5px, transparent 2px); }
-.room-icon { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 10px; background: rgba(255, 255, 255, 0.8); border: 2px solid #3b2a4d; }
-.room-name { font-family: var(--font-pixel); font-size: 12px; font-weight: 700; text-align: center; overflow-wrap: anywhere; line-height: 1.2; }
-.room-badge { font-size: 11px; font-weight: 800; padding: 1px 8px; border-radius: 999px; background: rgba(255, 255, 255, 0.9); color: #3b2a4d; border: 2px solid #3b2a4d; white-space: nowrap; }
-.state-due .room-badge { background: #ff5d8f; color: #fff; }
-.state-soon .room-badge { background: #fff1c7; }
-/* Rooms with chores due get a pink frame that gently pulses */
-.room-tile.state-due::before {
-  content: ''; position: absolute; inset: 0; border-radius: 6px; pointer-events: none;
-  box-shadow: inset 0 0 0 3px var(--glow); animation: tilepulse 2.4s ease-in-out infinite;
-}
-@keyframes tilepulse { 50% { box-shadow: inset 0 0 0 5px rgba(255, 143, 184, 0.7); } }
-/* Dust puffs (due) and twinkles (clean) */
-.fx { position: absolute; width: 8px; height: 8px; pointer-events: none; opacity: 0; }
-.fx1 { left: 12%; top: 18%; }
-.fx2 { right: 14%; top: 30%; animation-delay: 0.8s !important; }
-.fx3 { left: 22%; bottom: 16%; animation-delay: 1.6s !important; }
-.state-due .fx { background: #b9a9a0; border-radius: 2px; box-shadow: 6px -3px 0 -1px #c9bab1, -5px 2px 0 -1px #a89990; animation: dust 2.4s ease-in-out infinite; }
-.state-clean .fx, .state-soon .fx { background: #fff; clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%); width: 12px; height: 12px; animation: twinkle 2.4s ease-in-out infinite; }
-@keyframes dust { 0% { opacity: 0; transform: translate(0, 0); } 30%, 70% { opacity: 0.85; } 100% { opacity: 0; transform: translate(6px, -10px); } }
-@keyframes twinkle { 0%, 100% { opacity: 0; transform: scale(0.4) rotate(0); } 50% { opacity: 1; transform: scale(1) rotate(45deg); } }
-.here { position: absolute; top: 2px; left: 50%; transform: translateX(-50%); font-size: 12px; color: #ff5d8f; text-shadow: 1px 1px 0 #3b2a4d; animation: herebob 0.8s ease-in-out infinite; }
+.plan-label:disabled { cursor: default; background: rgba(255, 255, 255, 0.55); border-color: rgba(59, 42, 77, 0.25); box-shadow: none; color: rgba(59, 42, 77, 0.6); }
+.plan-label:not(:disabled):hover { transform: translate(-50%, -55%); }
+.plan-label.state-due { border-color: #ff6fa3; }
+.plan-label.picked { background: #ffe1ec; }
+.plan-name { font-family: var(--font-pixel); font-size: 11px; line-height: 1.15; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+.plan-badge { font-size: 10px; font-weight: 800; white-space: nowrap; }
+.plan-label.state-due .plan-badge { color: #e0457f; }
+.here { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); font-size: 12px; color: #ff6fa3; text-shadow: 1px 1px 0 #3b2a4d; animation: herebob 0.8s ease-in-out infinite; }
 @keyframes herebob { 50% { transform: translate(-50%, 3px); } }
+.elsewhere { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; font-size: 13px; font-weight: 700; }
+.elsewhere-chip { --hue: 335; }
+.elsewhere-chip.needs-love { border-color: var(--glow); }
+.map-hint { margin: 8px 0 0; text-align: center; font-size: 12px; font-weight: 700; }
 
 /* ── Summary stats ── */
 .summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 0 0 16px; }
@@ -494,9 +473,10 @@ input:focus-visible, textarea:focus-visible, .btn:focus-visible, button:focus-vi
   .topbar { padding: 12px 16px; }
   .brand h1 { font-size: 18px; }
   .page { padding: 0 16px 80px; }
-  .house { margin: 6px 10px 0; }
-  .roof { height: 48px; }
-  .rooms { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .house { margin: 0 8px; }
+  .plan-label { padding: 1px 4px 2px; border-width: 1.5px; border-radius: 6px; }
+  .plan-name { font-size: 8px; }
+  .plan-badge { font-size: 8px; }
   .summary { grid-template-columns: repeat(2, 1fr); gap: 8px; }
   .board { grid-template-columns: 1fr; }
   .two { grid-template-columns: 1fr; }

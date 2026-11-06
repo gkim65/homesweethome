@@ -17,7 +17,7 @@ doing, which room it is in, what kind of task it is, and when you last did it.
   "Linen closet" or "Descaling" work too.
 - **Little pixel icons.** Rooms and types get a pixel-art icon picked from keywords in the name
   (a pot for kitchens, a mop for mopping, a shirt for laundry…), and each room and type keeps its
-  own soft pastel colour. Anything unrecognised gets a sparkle or a little house.
+  soft pink or lavender colour. Anything unrecognised gets a sparkle or a little house.
 - **When you last did it.** Tap ✓ to mark a chore done today (tap again, or *undo*, to take it
   back). Open a chore to log a different date or remove one. Every "done" is kept as a dated row,
   so the sheet holds your full history.
@@ -26,10 +26,13 @@ doing, which room it is in, what kind of task it is, and when you last did it.
   day it is due. Due and overdue chores get a soft pink border. Chores with no schedule are
   "whenever" and have no bar.
 - **Filter and search.** Light up one or more room or type chips, or search names and notes.
-- **Your home map.** A little pixel house sits in the middle of the page with a tile for each
-  room. Each tile has its own floor (tiles, wood, carpet or grass). Rooms with chores due get a
-  soft pink frame and dust puffs, and clean rooms twinkle. Tap a room to see only its chores (tap
-  again to see everything). *hide map* tucks it away.
+- **Your studio floorplan.** A bird's-eye pixel drawing of a little studio apartment sits in the
+  middle of the page: kitchenette, desk nook, living area, bed corner, bathroom, laundry nook,
+  entryway and balcony. Each room you use lights up in its spot (picked from keywords in its name,
+  so "Bedroom", "Guest bedroom" and "Nursery" all go in the bed corner). Spots with chores due glow
+  soft pink with dust puffs; clean ones twinkle. Tap a spot to see only its chores (tap again to see
+  everything). Rooms with no spot, like "Linen closet", are listed under the plan. *hide map* tucks
+  it away.
 - **Bun, your cleaning buddy.** A pink pixel dust bunny who hops about and cheers whenever you finish a
   chore ("omg great job!! You finished 3 chores today! You should…"). If you have scrolled down,
   Bun pops up in the corner instead. Tap Bun to say hi. The encouragements are written for this
@@ -121,7 +124,7 @@ different addresses). After changing code, hard reload (Cmd+Shift+R).
 | `index.html` | page layout, dialogs, security policy |
 | `css/style.css` | light (day sky) and dark (night sky) themes, game-window panels, animations, phone layout |
 | `js/main.js` | the board, editor, marking chores done, wiring |
-| `js/homemap.js` | the little house map |
+| `js/homemap.js` | the studio floorplan |
 | `js/mascot.js` | Bun, the cheers, floating EXP and the level-up banner |
 | `js/dom.js` | building page elements safely |
 | `js/icons.js` | the pixel-art icons and which room/type gets which |

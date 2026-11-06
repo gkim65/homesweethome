@@ -61,7 +61,7 @@ function render() {
 
   renderSummary(items);
   renderPlayer();
-  renderHomeMap($('rooms'), rooms.map(([name, total]) => {
+  renderHomeMap($('plan'), rooms.map(([name, total]) => {
     const here = items.filter((x) => roomName(x.c) === name);
     return {
       name, total, iconKey: name === ROOMLESS ? '' : name,
@@ -106,10 +106,10 @@ function render() {
   groups.filter((g) => g.list.length).forEach((g) => board.append(groupCard(g)));
 }
 
-/** Click a room on the house map: show only its chores (click again to show everything). */
-function pickRoom(name) {
-  const only = view.rooms.size === 1 && view.rooms.has(name);
-  view.rooms = only ? new Set() : new Set([name]);
+/** Tap a spot on the floorplan: show only its rooms' chores (tap again to show everything). */
+function pickRoom(names) {
+  const only = view.rooms.size === names.length && names.every((n) => view.rooms.has(n));
+  view.rooms = only ? new Set() : new Set(names);
   render();
   if (!only) $('board').scrollIntoView({ behavior: calm() ? 'auto' : 'smooth', block: 'start' });
 }
